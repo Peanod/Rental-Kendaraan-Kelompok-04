@@ -1,0 +1,8 @@
+bin/
+out/
+sources.txt
+.settings/
+*.class
+# data/ sengaja TIDAK di-ignore agar data contoh ikut ter-commit bila diperlukan.
+# Hapus komentar baris di bawah jika ingin mengabaikan data lokal:
+# data/
