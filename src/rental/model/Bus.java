@@ -1,7 +1,6 @@
 package rental.model;
 
 import rental.exception.DataTidakValidException;
-import rental.util.CsvUtil;
 import rental.util.Validasi;
 
 /** Turunan Kendaraan: tidak ada diskon, tetapi wajib biaya sopir per hari. */
@@ -38,6 +37,6 @@ public class Bus extends Kendaraan {
 
     @Override
     public String toCsv() {
-        return CsvUtil.gabung(getJenis(), getId(), getPlat(), getMerek(), getTarifPerHari(), isTersedia(), jumlahKursi);
+        return csv(jumlahKursi);
     }
 }

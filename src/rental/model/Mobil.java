@@ -1,7 +1,6 @@
 package rental.model;
 
 import rental.exception.DataTidakValidException;
-import rental.util.CsvUtil;
 import rental.util.Validasi;
 
 /** Turunan Kendaraan: diskon 10% bila sewa 7 hari atau lebih. */
@@ -37,6 +36,6 @@ public class Mobil extends Kendaraan {
 
     @Override
     public String toCsv() {
-        return CsvUtil.gabung(getJenis(), getId(), getPlat(), getMerek(), getTarifPerHari(), isTersedia(), kapasitas);
+        return csv(kapasitas);
     }
 }

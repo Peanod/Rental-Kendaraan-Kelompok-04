@@ -63,8 +63,10 @@ src/rental/
                PelangganDao, PenyewaanDao, PenggunaDao, DataAwal
   controller/  AuthController, KendaraanController, PelangganController, PenyewaanController
   view/        LoginFrame, MainFrame, DashboardPanel, KendaraanPanel, PelangganPanel,
-               PenyewaanPanel, PanelData (abstract), UiUtil
+               PenyewaanPanel, PanelData (abstract), FotoPreview, UiUtil
 data/          dibuat otomatis saat pertama dijalankan (kendaraan.csv, pelanggan.csv, ...)
+data/foto/     foto kendaraan yang diunggah lewat tombol "Pilih Foto..." (dibuat otomatis)
+contoh-foto/   3 gambar ilustrasi (mobil, motor, bus) untuk mencoba fitur foto
 ```
 
 ## 5. Pemetaan ke ketentuan tugas
@@ -82,7 +84,7 @@ data/          dibuat otomatis saat pertama dijalankan (kendaraan.csv, pelanggan
 | Exception handling + custom | `DataTidakValidException`; try-catch I/O di `BaseCsvDao` (dibungkus `PenyimpananException`) dan di `PanelData.jalankan()` |
 | Min. 3 tampilan + login | `LoginFrame`, `MainFrame`, 4 panel (Dashboard, Kendaraan, Pelanggan, Penyewaan) |
 | CRUD >= 2 entitas dalam JTable | Kendaraan, Pelanggan, dan Penyewaan (3 entitas) |
-| Input bervariasi | JTextField, JComboBox, JRadioButton (jenis kelamin), JCheckBox (asuransi), JSpinner (tanggal & jumlah) |
+| Input bervariasi | JTextField, JComboBox, JRadioButton (jenis kelamin), JCheckBox (asuransi), JSpinner (tanggal & jumlah), JTextArea (alamat, deskripsi kondisi), JFileChooser (foto kendaraan) |
 | Menu bar / navigasi konsisten | `JMenuBar` + `JToolBar` di `MainFrame` (Ctrl+1..4) |
 | Dialog konfirmasi hapus + pesan error | `UiUtil.konfirmasi()` dan `UiUtil.galat()` |
 | Event handling tidak menumpuk | Tiap tombol memanggil method sendiri (`aksiTambah`, `aksiUbah`, `aksiHapus`, ...) |
@@ -102,6 +104,21 @@ data/          dibuat otomatis saat pertama dijalankan (kendaraan.csv, pelanggan
 - Kendaraan yang sedang disewa tidak bisa disewa lagi; otomatis tersedia lagi saat transaksi diselesaikan/dihapus.
 - Kendaraan atau pelanggan yang sudah tercatat di transaksi tidak bisa dihapus (menjaga riwayat).
 - Plat nomor dan No. KTP harus unik. Transaksi yang sudah selesai tidak bisa diubah.
+
+## 7b. Foto dan deskripsi kondisi kendaraan
+
+Agar calon penyewa tahu kondisi kendaraan sebelum menyewa, setiap kendaraan punya **foto** dan **deskripsi kondisi**.
+
+- Halaman **Kendaraan**: panel *Foto dan Deskripsi Kondisi* di bawah tabel. Klik baris untuk melihat foto dan
+  deskripsinya. **Pilih Foto...** memilih gambar (JPG/PNG/GIF, maks. 5 MB), **Hapus Foto** menghapusnya.
+  Deskripsi (maks. 500 karakter) disimpan bersama data saat menekan **Tambah** atau **Ubah**.
+- Halaman **Penyewaan**: panel *Info Kendaraan yang Dipilih* menampilkan foto dan kondisi kendaraan yang
+  sedang dipilih pada form, sehingga petugas bisa menunjukkannya ke calon penyewa.
+- Foto disalin ke folder `data/foto/` (nama berkas = ID kendaraan), jadi aman bila berkas aslinya dipindah.
+  Foto ikut terhapus saat kendaraan dihapus. Kolom **Foto** pada tabel menandai kendaraan yang sudah punya foto.
+- Berkas data lama (tanpa kolom deskripsi dan foto) tetap terbaca; kendaraan lama hanya tampil tanpa foto.
+- Deskripsi pada data contoh hanya contoh; ganti dengan kondisi kendaraan yang sebenarnya.
+  Gambar di `contoh-foto/` hanya ilustrasi, bukan foto kendaraan asli.
 
 ## 8. Pembagian kerja & Git (saran)
 
@@ -130,7 +147,7 @@ Disarankan commit bertahap dengan pesan yang jelas (bukan satu commit besar) aga
 
 ## 9. Pertanyaan umum
 
-- **Data hilang / ingin reset?** Tutup aplikasi, hapus folder `data/`, jalankan lagi (data contoh dibuat ulang).
+- **Data hilang / ingin reset?** Tutup aplikasi, hapus folder `data/` (termasuk `data/foto/`), jalankan lagi (data contoh dibuat ulang).
 - **Eclipse bilang "Unbound JRE"?** Lihat langkah 4 di bagian Eclipse.
 - **Ingin pakai database SQLite/MySQL?** Cukup tambah kelas DAO baru yang mengimplementasikan `Dao<T>`;
   controller dan view tidak perlu diubah (itulah gunanya lapisan DAO).

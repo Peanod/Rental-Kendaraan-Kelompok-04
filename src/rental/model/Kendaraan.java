@@ -1,6 +1,7 @@
 package rental.model;
 
 import rental.exception.DataTidakValidException;
+import rental.util.CsvUtil;
 import rental.util.Validasi;
 
 /**
@@ -9,12 +10,15 @@ import rental.util.Validasi;
  */
 public abstract class Kendaraan implements DapatDisimpan {
     public static final double TARIF_ASURANSI = 0.05; // 5% dari biaya sewa
+    public static final int MAKS_DESKRIPSI = 500;     // panjang maksimum deskripsi kondisi
 
     private String id;
     private String plat;
     private String merek;
     private double tarifPerHari;
     private boolean tersedia = true;
+    private String deskripsi = ""; // kondisi kendaraan (opsional) agar calon penyewa tahu
+    private String foto = "";      // nama berkas foto di folder data/foto (opsional)
 
     protected Kendaraan(String id, String plat, String merek, double tarifPerHari)
             throws DataTidakValidException {
@@ -45,6 +49,12 @@ public abstract class Kendaraan implements DapatDisimpan {
     @Override
     public abstract String toCsv();
 
+    /** Format CSV bersama: jenis,id,plat,merek,tarif,tersedia,nilaiKhusus,deskripsi,foto. */
+    protected String csv(int nilaiKhusus) {
+        return CsvUtil.gabung(getJenis(), getId(), getPlat(), getMerek(), getTarifPerHari(),
+                isTersedia(), nilaiKhusus, deskripsi, foto);
+    }
+
     // ---- getter & setter dengan validasi ----
     @Override
     public String getId() { return id; }
@@ -74,6 +84,24 @@ public abstract class Kendaraan implements DapatDisimpan {
     public boolean isTersedia() { return tersedia; }
 
     public void setTersedia(boolean tersedia) { this.tersedia = tersedia; }
+
+    public String getDeskripsi() { return deskripsi; }
+
+    public void setDeskripsi(String deskripsi) throws DataTidakValidException {
+        String d = deskripsi == null ? "" : deskripsi.trim();
+        if (d.length() > MAKS_DESKRIPSI) {
+            throw new DataTidakValidException("Deskripsi kondisi maksimal " + MAKS_DESKRIPSI
+                    + " karakter (sekarang " + d.length() + ").");
+        }
+        this.deskripsi = d;
+    }
+
+    /** Nama berkas foto (bukan path penuh); string kosong berarti belum ada foto. */
+    public String getFoto() { return foto; }
+
+    public void setFoto(String foto) { this.foto = foto == null ? "" : foto.trim(); }
+
+    public boolean adaFoto() { return !foto.isEmpty(); }
 
     @Override
     public String toString() {
